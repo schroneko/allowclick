@@ -1,14 +1,12 @@
 # AllowClick
 
-AllowClick is an unfinished macOS menu bar prototype for the Apple Events permission request from `Grok Bot.app` to `Terminal.app`. It is not ready for installation or use: the owner, Accessibility structure, and successful operation on the actual system dialog have not been verified.
+AllowClick is a macOS menu bar app that clicks Allow on standard system permission dialogs. It matches a modal window owned by an Apple-signed app under `/System/Library/`, with a non-empty message and exactly one enabled Allow button together with one enabled Don't Allow button (or 許可 / 許可しない). It skips web content. It requires macOS Accessibility permission.
 
-The intended rule matches only the exact English or Japanese Apple Events message for that requester and target, a modal window belonging to an Apple-signed system application, and one enabled Allow button together with one enabled Don't Allow button. It excludes web content. It requires macOS Accessibility permission.
-
-The app's watcher and the LaunchAgent installer have not been run against the real permission prompt. Do not activate them until the system dialog can be independently verified.
+Examples it is meant to match include Apple Events prompts and TCC prompts such as an app asking to access files in Documents.
 
 The menu bar shows the current Accessibility permission state. When permission is missing, select `Open Accessibility Settings…` to request the permission and open the macOS Accessibility settings. The user controls whether the permission is granted.
 
-To build and check the current prototype in a new build directory:
+To build and check the matcher:
 
 ```sh
 ALLOWCLICK_BUILD_DIR="$(mktemp -d -t allowclick-build)" bash scripts/build-app.sh
@@ -16,4 +14,4 @@ swiftc AllowRule.swift main.swift -o /tmp/allowclick-rule-tests
 /tmp/allowclick-rule-tests
 ```
 
-The build script creates `AllowClick.app` in the selected build directory. It uses ad hoc signing unless `ALLOWCLICK_SIGNING_IDENTITY` selects a stable signing identity. The untested LaunchAgent installer accepts an absolute app path, starts at login, and restarts after an unsuccessful exit. `scripts/uninstall-agent.sh` removes the installed LaunchAgent.
+The build script creates `AllowClick.app` in the selected build directory. It uses ad hoc signing unless `ALLOWCLICK_SIGNING_IDENTITY` selects a stable signing identity. `scripts/install-agent.sh` accepts an absolute app path, starts at login, and restarts after an unsuccessful exit. `scripts/uninstall-agent.sh` removes the installed LaunchAgent.

@@ -95,9 +95,8 @@ final class AutomationWatcher {
         let labels = buttons.map(\.0)
         for message in messages {
             let dialog = AllowDialog(verifiedSystemOwner: true, isModal: true, message: message, buttons: labels)
-            guard AllowRule.matches(dialog) else { continue }
-            let expected = message.split(whereSeparator: \.isWhitespace).joined(separator: " ") == AllowRule.messages[0] ? "Allow" : "許可"
-            return buttons.first { $0.0 == expected }?.1
+            guard AllowRule.matches(dialog), let expected = AllowRule.allowButtonTitle(in: labels) else { continue }
+            return buttons.first { AllowRule.normalize($0.0) == expected }?.1
         }
         return nil
     }
